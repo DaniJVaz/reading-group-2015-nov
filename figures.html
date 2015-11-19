@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>Figure View</title>
+<style>
+
+text {
+  font: 10px sans-serif;
+}
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+  stroke-width: 1.5px;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+</style>
+
+<p id="chart1">
+<p id="chart2">
+
+<script src="js/d3.v2.min.js" charset="utf-8"></script>
+<script src="js/charts.js" charset="utf-8"></script>
+<script>
+  c1 = chart(D, "chart1", 500, 500);
+  c1.f0  = c1.getColorBits(0, 0, [1]);
+  c1.f1  = c1.getColorBits(0, 1, [2, 1]);
+  c1.f2  = c1.getColorBits(1, 1, [2, 1]);
+  c1.f3  = c1.getColorBits(2, 1, [2, 1]);
+  c1.f1n = c1.getColorBits(0, 1, [2, 3]);
+  c1.f2n = c1.getColorBits(1, 3, [2, 3, 5, 7, 9]);
+  c1.recolor(c1.f2n, c1.f3);
+
+  c2 = chart(D2, "chart2", 300, 500);
+  c2.f0  = c2.getColorBits(0, 0, [1]);
+  c2.f1n = c2.getColorBits(0, 1, [1, 3]);
+  c2.recolor(c2.f1n, c2.f0);
+</script>

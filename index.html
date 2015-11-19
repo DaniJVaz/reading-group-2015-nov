@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js – The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		<style type="text/css">
+		p { text-align: left; }
+		div.list, div.ulist { text-align: left; line-height: 1.75;}
+		div.list li, div.ulist li {margin-bottom: 0.5em;}
+		div.list li li, div.ulist li li {margin-bottom: 0em;}
+
+.reveal .slide-number {
+  right: 32px;
+  bottom: 32px;
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: rgba(255,255,255,0);
+  color: #666;
+  text-shadow:
+    -1px -1px 0 rgba(100%, 100%, 100%, 0.5),
+     1px -1px 0 rgba(100%, 100%, 100%, 0.5),
+    -1px  1px 0 rgba(100%, 100%, 100%, 0.5),
+     1px  1px 0 rgba(100%, 100%, 100%, 0.5);
+}
+
+.reveal[data-transition-speed="veryfast"] > .slides section, 
+.reveal .slides section[data-transition-speed="veryfast"],
+.reveal[data-transition-speed="veryfast"] > .backgrounds .slide-background,
+.reveal.has-parallax-background[data-transition-speed="veryfast"] .backgrounds {
+  -webkit-transition-duration: 0.2s !important;
+  transition-duration: 0.2s !important;
+  transition-timing-function: ease-in !important; }
+
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+  stroke-width: 1.5px;
+}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section class="center">
+					<h3 class="blue"><em> A Polylogarithmic Approximation Algorithm for the <br/>Group Steiner Tree Problem </em></h3>
+					<h4> N. Garg, G. Konjerod, R. Ravi </h4>
+					<h5> Presented by Daniel Vaz </h5>
+				</section>
+				<section>
+					<h2>Minimum Spanning Tree</h2>
+					<div id="chart1"/>
+					<span id="chart1b" class="fragment"/>
+				</section>
+				<section>
+					<h2>Steiner Tree</h2>
+					<div id="chart2"/>
+					<span id="chart2b" class="fragment"/>
+					<span id="chart2c" class="fragment"/>
+				</section>
+				<section>
+					<h2>Group Steiner Tree</h2>
+					<div id="chart3"/>
+					<span id="chart3b" class="fragment"/>
+					<span id="chart3c" class="fragment"/>
+				</section>
+				<section>
+					<h2>Group Steiner Tree</h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li>
+								<strong>Input:</strong>
+								<ul>
+									<li>Graph $G = (V, E)$ with edge weights $c_e\geq0$</li>
+									<li>A root vertex $r$</li>
+									<li>$k$ groups of vertices $g_1, g_2, \ldots, g_k$</li>
+								</ul>
+							</li>
+							<li>
+								<strong>Goal:</strong> Obtain a tree $T$ that
+								<ul>
+									<li> Connects each group $g_i$ to $r$ </li>
+									<li> Has minimum cost </li>
+								</ul>
+							</li>
+
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Results </h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li> This paper 
+								<ul>
+									<li> $O(\log n \, \log k)$ approximation for trees </li>
+									<li> $O(\log^2 n \, \log k)$ approximation for general graphs </li>
+								</ul>
+							</li>
+							<li> Other Results
+								<ul>
+									<li> Hardness of $\Omega(\log^{2-\epsilon} n)$ (trees) </li>
+									<li> Some quasi-polynomial algorithms </li>
+									<li> $O(\log^{1+\epsilon} n \, \log k)$ approximation for trees </li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2>Outline</h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li> 
+								Solve the problem on Trees 
+								<ul>
+									<li>Solve linear program</li>
+									<li>Round solution</li>
+									<li>Multiple rounds</li>
+								</ul>
+							</li>
+							<li>
+								Extend to general graphs
+							</li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Linear Program </h2>
+					<br/>
+					<p class="fragment">
+						$\displaystyle \text{min}  \sum_e c_e x_e$
+					</p>
+					<p class="fragment">
+						$\displaystyle \quad\,\,\,\,\sum_{e \in \delta S} x_e \geq 1, \quad\quad 
+									\forall\,S \subseteq V: S \text{ cuts } r \text{ from some } g_i$
+					</p>
+					<p>
+						<span class="fragment current-visible" style="position:absolute; "> 
+							$\displaystyle \quad\,\,\,\,x_e \in \{0, 1\}$
+						</span>
+						<span class="fragment" style="position:absolute; "> $\displaystyle \quad\,\,\,\,x_e \in [0, 1]$</span>
+					</p>
+				</section>
+
+				<section>
+					<h2>Rounding</h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li>
+								Pick $e$ with probability $x_e$?
+								<ul>
+									<li>Doesn't work</li>
+								</ul>
+							</li>
+							<li>
+								Do dependent rounding: 
+								<ul>
+									<li> mark $e$ with probability $x_e/x_{p(e)}$</li>
+									<li> pick marked $e$ if $p(e)$ is picked </li>
+								</ul>
+							</li>
+						</ul>
+						<div class="fragment" data-fragment-index="2" style="float:right" id="chart4"/>
+					</div>
+				</section>
+
+				<section>
+					<h2>Rounding</h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li><strong> Lemma 1: </strong> This algorithm outputs $E^\prime \subseteq E$ such that:
+							<ol>
+								<li> $P[e\text{ is picked}] = x_e$ </li>
+								<li> $E[\text{Cost of } E^\prime] = OPT$ </li>
+								<li> For any group $g$, 
+									$$P[E^\prime \text{ connects }r\text{ to }g] \geq \Omega\left(\frac1{\log |g|}\right)$$</li>
+							</ol>
+							</li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Multiple Rounds </h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li> The probability of success is too low </li>
+							<li> Run $L=O(\log k \, \log n)$ rounds of the algorithm</li>
+							<li> 
+								<strong> Lemma 2: </strong> Let $\hat E = \bigcup_{i\in [L]} \hat E_i$ after $L$ rounds. Then, 
+								<ul>
+									<li> $P[\hat E\text{ connects all groups to }r] \geq 3/4$ </li>
+									<li> $E[\text{Cost of } \hat E] = O(\log n \, \log k) \, OPT$ </li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Proof of Lemma 2 </h2>
+					<br/>
+					<div class="ulist">
+						<p>
+							<strong> Lemma 2: </strong> Let $\hat E = \bigcup_{i\in [L]} \hat E_i$ after $L$ rounds. Then, 
+								<ul>
+									<li> $P[\hat E\text{ connects all groups to }r] \geq 3/4$ </li>
+									<li> $E[\text{Cost of } \hat E] = O(\log n \, \log k) \, OPT$ </li>
+								</ul>
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h2> Proof of Lemma 1.3 </h2>
+					<br/>
+					<div class="list">
+						<p>
+							<strong> Lemma 1.3: </strong> For any group $g$, 
+									$$P[\hat E \text{ connects }r\text{ to }g] \geq \Omega\left(\frac1{\log |g|}\right)$$
+						</p>
+						<p>
+							Steps:
+
+							<ul>
+								<li> Apply a transformation </li>
+								<li> Bound probability with Jansen's inequality </li>
+							</ul>
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h2> Proof of Lemma 1.3 </h2>
+					<br/>
+					<div class="list">
+						<p>
+							<strong> Claim 3: </strong> If $x^\prime_e \leq x_e$ for all $e \in E$, 
+							<br/> &nbsp;
+								$$P[connect(g,x^\prime)] \leq P[connect(g, x)]$$
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h2> Proof of Lemma 1.3 </h2>
+					<br/>
+					<div class="list">
+						<ul> <li>
+							<strong>Transformation: </strong>
+							<ol>
+								<li> Remove unnecessary edges (not leading to $g$) </li>
+								<li> Reduce $x$ such that it is minimally feasible </li>
+								<li> Round down all $x_e$ to the nearest power of $2$ </li>
+								<li> Delete all edges with $x_e \leq 1/4|g|$ </li>
+								<li> If $x_e = x_{p(e)}$, contract $e$ </li>
+							</ol>
+						</li> </ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Proof of Lemma 1.3 </h2>
+					<br/>
+					<div class="list">
+						<ul> <li>
+							<strong> Jansen's inequality: </strong> 
+							<ul>
+								<li> Let $S$ be a ground set and $P_1, P_2, \ldots$ subsets of $S$ </li>
+								<li> 
+									Let $S^\prime$ be a random independent sample of $S$
+								</li>
+								<li>
+									Let $\mathcal{E}_i$ be the event that $P_i \subseteq S^\prime$
+								</li>
+								<li>
+									Let $\mu = \sum_i P[\mathcal{E}_i]$ and $\Delta = \sum_{i\sim j} P[\mathcal{E}_i \cap \mathcal{E}_j]$
+								</li>
+								<li> Then,
+									$$P\left[\cap_i \bar{\mathcal{E}}_i\right] \leq \exp\left\{\frac{-\mu^2}{2\Delta}\right\}$$
+								</li>
+							</ul>
+						</li> </ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Proof of Lemma 1.3 </h2>
+					<br/>
+					<div class="list">
+						<ul> <li>
+							<strong> Claim 4: </strong> 
+							<ul>
+								<li> Let $S$ be the set of edges </li>
+								<li> $P_v$ the set of edges in the path from $r$ to $v$ </li>
+								<li> 
+									Let $S^\prime$ be a set of edges marked w. p. $x_e/x_{p(e)}$.
+								</li>
+								<li>
+									Then, $1/4 \leq \mu \leq 1$ and $\Delta \leq 2 \log n $
+								</li>
+							</ul>
+						</li> </ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Proof of Lemma 1.3 </h2>
+					<br/>
+					<div class="ulist">
+						<p>
+							<strong> Lemma 1.3: </strong> For any group $g$, 
+									$$P[\hat E \text{ connects }r\text{ to }g] \geq \Omega\left(\frac1{\log |g|}\right)$$
+						</p>
+						<p>
+							Steps:
+
+							<ul>
+								<li> Apply a transformation </li>
+								<li> Bound probability with Jansen's inequality </li>
+							</ul>
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h2> General Graphs </h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li> Approximate edge costs by a tree metric
+								<ul>
+									<li> Possible to do with $O(\log n)$ distortion</li>
+									<li> This transforms the graph into a tree</li>
+								</ul>
+							</li>
+							<li> Result: $O(\log^2 n \, \log k)$ approximation </li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<h2> Conclusion </h2>
+					<br/>
+					<div class="list">
+						<ul>
+							<li> $O(\log n \, \log k)$ approximation for trees </li>
+							<li> $O(\log^2 n \, \log k)$ approximation for general graphs </li>
+							<li> Hardness of $\Omega(\log^{2-\epsilon} n)$ (trees) </li>
+						</ul>
+					</div>
+				</section>
+
+				<section class="center">
+					<h3 class="blue"><em> A Polylogarithmic Approximation Algorithm for the <br/>Group Steiner Tree Problem </em></h3>
+					<h4> N. Garg, G. Konjerod, R. Ravi </h4>
+					<h5> Presented by Daniel Vaz </h5>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Add fragment to all the li's 
+			Array.prototype.slice.call(document.querySelectorAll(".list li"))
+					.forEach(
+						function(o,i) {
+							o.className += " fragment";
+							p = o.parentNode;
+							while (p.tagName != "SECTION") p = p.parentNode;
+
+							j = p.getAttribute("data-fragment-current-index");
+							j = (j===null)?1:(parseInt(j)+1);
+							p.setAttribute("data-fragment-current-index", j);
+							o.setAttribute("data-fragment-index", j);
+							o.setAttribute("data-fragment-set-index", j);
+						});
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				slideNumber: true,
+				history: true,
+				center: false,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+				transitionSpeed: 'veryfast',
+				backgroundTransition: 'fade',
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true },
+					// MathJax
+        			{ src: 'plugin/math/math.js', async: true }
+				],
+
+				math: {
+					mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+					config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+				},
+			});
+
+		</script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				"HTML-CSS": { scale: 97}
+			});
+		</script>
+
+		<script src="js/d3.v2.min.js" charset="utf-8"></script>
+		<script src="js/charts.js" charset="utf-8"></script>
+		<script>
+			var w = 500, h = 500, R = 12, S = 1.3;
+			c1 = chart(D, "chart1", w, h, R, S);
+			c1.f0 = c1.getColorBits(0, 0, [1]);
+			c1.f1 = c1.getColorBits(0, 1, [20, 1]);
+			c1.recolor(c1.f0, c1.f0);
+
+			c2 = chart(D, "chart2", w, h, R, S);
+			c2.f0  = c2.getColorBits(0, 0, [1]);
+			c2.f1  = c2.getColorBits(0, 1, [20, 1]);
+			c2.f2  = c2.getColorBits(1, 1, [20, 1]);
+			c2.f1n = c1.getColorBits(0, 1, [20, 3]);
+			c2.recolor(c2.f0, c2.f1);
+
+			c3 = chart(D, "chart3", w, h, R, S);
+			c3.f2  = c3.getColorBits(1, 1, [20, 1]);
+			c3.f3  = c3.getColorBits(2, 1, [20, 1]);
+			c3.f1n = c3.getColorBits(0, 1, [20, 3]);
+			c3.f2n = c3.getColorBits(1, 3, [20, 3, 5, 7, 9]);
+			c3.recolor(c3.f1n, c3.f2);
+
+			c4 = chart(D2, "chart4", 300, h, R, S);
+			c4.f0  = c4.getColorBits(0, 0, [1]);
+			c4.f1n = c4.getColorBits(0, 1, [1, 3]);
+			c4.recolor(c4.f1n, c4.f0);
+
+			Reveal.addEventListener( 'fragmentshown', function( event ) {
+				var id = event.fragment.id;
+				if (id == "chart1b") {
+					c1.recolor(c1.f0, c1.f1);
+				}
+				else if (id == "chart2b") {
+					c2.recolor(c2.f1n, c2.f1);
+				}
+				else if (id == "chart2c") {
+					c2.recolor(c2.f1n, c2.f2);
+				}
+				else if (id == "chart3b") {
+					c3.recolor(c3.f2n, c3.f2);
+				}
+				else if (id == "chart3c") {
+					c3.recolor(c3.f2n, c3.f3);
+				}
+			} );
+
+			Reveal.addEventListener( 'fragmenthidden', function( event ) {
+				var id = event.fragment.id;
+				if (id == "chart1b") {
+					c1.recolor(c1.f0, c1.f0);
+				}
+				else if (id == "chart2b") {
+					c2.recolor(c2.f0, c2.f1);
+				}
+				else if (id == "chart2c") {
+					c2.recolor(c2.f1n, c2.f1);
+				}
+				else if (id == "chart3b") {
+					c3.recolor(c3.f1n, c3.f2);
+				}
+				else if (id == "chart3c") {
+					c3.recolor(c3.f2n, c3.f2);
+				}
+			} );
+		</script>
+
+	</body>
+</html>
